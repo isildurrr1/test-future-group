@@ -6,6 +6,7 @@ const App = () => {
   return (
     <div className='app'>
       <Search/>
+      <div className="found-results">Found 446 results</div>
     </div>
   )
 }
