@@ -7,7 +7,7 @@ const App = () => {
   return (
     <div className='app'>
       <Search />
-      <div className="found-results">Found 446 results</div>
+      <div className="found-results">Found 447 results</div>
       <CardsContainer/>
     </div>
   )
