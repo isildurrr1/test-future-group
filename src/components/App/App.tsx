@@ -7,14 +7,15 @@ import { IBook } from '../../types/types';
 
 const App = () => {
 
+  const [totalBooks, setTotalBooks] = useState<number | null>(null)
   const [showBook, setShowBook] = useState<boolean>(false)
   const [booksData, setBooksData] = useState<IBook>(
     {
-      'category': 'Computers',
-      'cover': 'https://clck.ru/38o4PH',
-      'title': 'Node.js Разработка серверных веб- приложений на JavaScript',
-      'author': 'Дэвид Хэррон',
-      'discription': 'описание книги'
+      'category': 'Computers', // books[0].volumeInfo.categories
+      'cover': 'https://clck.ru/38o4PH', // books[0].volumeInfo.imageLinks.smallThumbnail
+      'title': 'Node.js Разработка серверных веб- приложений на JavaScript', // books[0].volumeInfo.title
+      'author': 'Дэвид Хэррон', // books[0].volumeInfo.authors.join(', ')
+      'discription': 'описание книги' // books[0].volumeInfo.description
     }
   )
   const [books, setBooks] = useState<Array<any>>([])
@@ -28,6 +29,8 @@ const App = () => {
       .then(res => res.json())
       .then((data) => {
         // console.log(data.items);
+        console.log(data.totalItems)
+        setTotalBooks(data.totalItems)
         setBooks(data.items)
       });
   }, []);
@@ -38,8 +41,8 @@ const App = () => {
       {showBook ?
         <Book /> :
         <>
-          <div className="found-results">Found 447 results</div>
-          {books[0] !== undefined && console.log(books[0].volumeInfo.title)}
+          <div className="found-results">{totalBooks ? `Found ${totalBooks} results` : ''}</div>
+          {books[0] !== undefined && console.log(books)}
           {/* <div className="found-results">{console.log(books)}</div> */}
           <CardsContainer />
         </>
