@@ -1,7 +1,11 @@
 export interface IBook {
   'category': string,
-  'cover': string,
+  'smallThumbnail': string,
   'title': string,
   'author': string,
   'discription': string
+}
+
+export interface CardsContainerProps {
+  books: IBook[]
 }

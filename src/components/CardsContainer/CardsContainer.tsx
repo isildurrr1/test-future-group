@@ -1,15 +1,12 @@
+import { CardsContainerProps } from '../../types/types';
 import Card from '../Card/Card';
 import './CardsContainer.sass';
 
-const CardsContainer = () => {
+const CardsContainer: React.FC<CardsContainerProps> = ({books}) => {
+  console.log(books)
   return (
     <div className="cards-container">
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
-      <Card/>
+      <Card />
     </div>
   )
 }
