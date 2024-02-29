@@ -9,3 +9,7 @@ export interface IBook {
 export interface CardsContainerProps {
   books: IBook[]
 }
+
+export interface CardProps {
+  book: IBook
+}

@@ -1,14 +1,15 @@
+import { CardProps } from '../../types/types';
 import './Card.sass';
+import noPhoto from './../../images/no_image.jpg'
 
-const Card = () => {
+const Card: React.FC<CardProps> = ({ book }) => {
   return (
     <div className="card">
-      <div className="card-cover" />
+      <img src={book?.smallThumbnail || noPhoto } alt={book?.title} className="card-cover" />
       <div className="card-info">
-        <div className="card-categories">Computers</div>
-        <div className="card-title">Node.js Разработка
-          серверных веб-приложений на JavaScript</div>
-        <div className="card-author">Дэвид Хэррон</div>
+        <div className="card-categories">{book?.category}</div>
+        <div className="card-title">{book?.title}</div>
+        <div className="card-author">{book?.author}</div>
       </div>
     </div>
   )

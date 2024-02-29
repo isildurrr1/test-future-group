@@ -9,10 +9,10 @@
     transform: scale(1.025)
 
 .card-cover
+  display: flex
   margin: 20px auto 10px auto
-  background: url('../../images/book.jpg') no-repeat center / cover
-  width: 90px
-  height: 150px
+  max-width: 128px
+  max-height: 188px
 
 .card-info
   margin: 10px
@@ -26,6 +26,10 @@
   font-weight: bold
   font-size: 14px
   padding: 5px 0
+  display: -webkit-box
+  -webkit-line-clamp: 3 
+  -webkit-box-orient: vertical
+  overflow: hidden
 
 .card-author
   font-size: 12px

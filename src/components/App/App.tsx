@@ -12,10 +12,10 @@ const App = () => {
   const [booksData, setBooksData] = useState<IBook[]>([
     // {
     //   'category': '', // books[0].volumeInfo.categories
-    //   'smallThumbnail': 'https://clck.ru/38o4PH', // books[0].volumeInfo.imageLinks.smallThumbnail
-    //   'title': 'Node.js Разработка серверных веб- приложений на JavaScript', // books[0].volumeInfo.title
-    //   'author': 'Дэвид Хэррон', // books[0].volumeInfo.authors.join(', ')
-    //   'discription': 'описание книги' // books[0].volumeInfo.description
+    //   'smallThumbnail': '', // books[0].volumeInfo.imageLinks.smallThumbnail
+    //   'title': '', // books[0].volumeInfo.title
+    //   'author': '', // books[0].volumeInfo.authors.join(', ')
+    //   'discription': '' // books[0].volumeInfo.description
     // }
   ]
   )
@@ -35,7 +35,7 @@ const App = () => {
         let array: IBook[] = []
         data.items.forEach((item: any) => {
           const newObj: IBook = {
-            'category': item.volumeInfo.categories,
+            'category': item.volumeInfo.categories?.join(', '),
             'smallThumbnail': item.volumeInfo.imageLinks?.smallThumbnail,
             'title': item.volumeInfo.title,
             'author': item.volumeInfo.authors?.join(', '),
