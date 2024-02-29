@@ -1,19 +1,20 @@
+import { BookProps } from '../../types/types';
 import './Book.sass';
+import noPhoto from './../../images/no_image.jpg'
 
-const Book = () => {
+const Book: React.FC<BookProps> = ({ book }) => {
+  console.log(book)
   return (
     <div className='book'>
       <div className="book-cover">
-        <div className="book-image" />
+        <img src={book.thumbnail || noPhoto} alt={book?.title} className="book-image" />
       </div>
       <div className="book-discription">
         <div className="book-container">
-          <div className="book-categories">Art/General</div>
-          <div className="book-title">Node.js Разработка
-            серверных веб-приложений на JavaScript</div>
-          <div className="book-author">Дэвид Хэррон</div>
-          <div className="book-annotation">An open score edition Bach's Goldberg
-            Variations</div>
+          <div className="book-categories">{book?.category}</div>
+          <div className="book-title">{book?.title}</div>
+          <div className="book-author">{book?.author}</div>
+          <div className="book-annotation">{book?.discription}</div>
         </div>
       </div>
     </div>

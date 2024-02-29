@@ -8,18 +8,10 @@ import { IBook } from '../../types/types';
 const App = () => {
 
   const [totalBooks, setTotalBooks] = useState<number>()
-  // const [showBook, setShowBook] = useState<boolean>(false)
-  const [booksData, setBooksData] = useState<IBook[]>([
-    // {
-    //   'category': '', // books[0].volumeInfo.categories
-    //   'smallThumbnail': '', // books[0].volumeInfo.imageLinks.smallThumbnail
-    //   'title': '', // books[0].volumeInfo.title
-    //   'author': '', // books[0].volumeInfo.authors.join(', ')
-    //   'discription': '' // books[0].volumeInfo.description
-    // }
-  ]
-  )
-  // const [books, setBooks] = useState<Array<any>>([])
+  const [selectedBook, setSelectedBook] = useState<IBook>()
+  const [booksData, setBooksData] = useState<IBook[]>([])
+
+  const handleBookClick = (book: IBook) => setSelectedBook(book);
 
   const BASE_URL = 'https://www.googleapis.com/books/v1/'
   useEffect(() => {
@@ -30,13 +22,14 @@ const App = () => {
     })
       .then(res => res.json())
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         setTotalBooks(data.totalItems);
         let array: IBook[] = []
         data.items.forEach((item: any) => {
           const newObj: IBook = {
             'category': item.volumeInfo.categories?.join(', '),
             'smallThumbnail': item.volumeInfo.imageLinks?.smallThumbnail,
+            'thumbnail': item.volumeInfo.imageLinks?.thumbnail,
             'title': item.volumeInfo.title,
             'author': item.volumeInfo.authors?.join(', '),
             'discription': item.volumeInfo.description,
@@ -51,13 +44,14 @@ const App = () => {
     <div className='app'>
       <Search />
       {
-        booksData ?
-          <>
-            <div className="found-results">{totalBooks ? `Found ${totalBooks} results` : ''}</div>
-            <CardsContainer books={booksData} />
-          </>
+        selectedBook ?
+          <Book book={selectedBook} />
           :
-          <></>
+          < CardsContainer
+            onBookClick={handleBookClick}
+            books={booksData}
+            totalBooks={totalBooks}
+          />
       }
     </div>
   )
