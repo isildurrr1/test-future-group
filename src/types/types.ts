@@ -7,6 +7,16 @@ export interface IBook {
   'discription': string
 }
 
+export interface IOption {
+  searchText: string,
+  category: string,
+  sort: string
+}
+
+export interface SearchProps {
+  onSubmit: Function
+}
+
 export interface CardsContainerProps {
   onBookClick: Function,
   books: IBook[],
