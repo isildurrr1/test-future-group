@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import './Search.sass';
 import { IOption, SearchProps } from '../../types/types';
 
@@ -12,17 +12,17 @@ const Search: React.FC<SearchProps> = ({ onSubmit }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValue({
-      ...formValue,
+    setFormValue(prevState => ({
+      ...prevState,
       [name]: value
-    });
+    }));
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    onSubmit(formValue)
-    console.log(formValue)
-  }
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit(formValue);
+  }, [formValue, onSubmit]);
+  
 
   return (
     <div className='search'>
@@ -38,7 +38,7 @@ const Search: React.FC<SearchProps> = ({ onSubmit }) => {
           <button 
           type='submit' 
           className="search-submitBtn"
-          disabled={formValue.searchText === '' ? true : false} 
+          disabled={!formValue.searchText}
           />
         </div>
         <div className="search-selects">

@@ -1,38 +1,42 @@
-import CardsContainer from '../CardsContainer/CardsContainer';
 import { useEffect, useState } from 'react';
+import { IBook, IOption } from '../../types/types';
+import CardsContainer from '../CardsContainer/CardsContainer';
+import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
 import Book from '../Book/Book';
 import Search from '../Search/Search';
 import './App.sass';
-import { IBook, IOption } from '../../types/types';
-import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
+import Loader from '../Loader/Loader';
 
 const App = () => {
 
   const [totalBooks, setTotalBooks] = useState<number>();
   const [selectedBook, setSelectedBook] = useState<IBook>();
   const [booksData, setBooksData] = useState<IBook[]>([]);
-  const [searchOption, setSearchOption] = useState<IOption>(
-    // {
-    //   searchText: '',
-    //   category: '',
-    //   sort: '',
-    // }
-  );
+  const [searchOption, setSearchOption] = useState<IOption>();
+  const [startBookIndex, setStartBookIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const onSubmitSearch = (formValue: IOption) => {
+    setBooksData([]);
+    setTotalBooks(0);
+    setSearchOption(formValue);
+    setStartBookIndex(0);
+  }
   const handleBookClick = (book: IBook) => setSelectedBook(book);
+  const handleLoadMoreClick = () => setStartBookIndex(startBookIndex + 30);
 
   const BASE_URL = 'https://www.googleapis.com/books/v1/';
 
   useEffect(() => {
     if (searchOption) {
-      fetch(`${BASE_URL}volumes?q=${searchOption.searchText}&orderBy=${searchOption.sort}&maxResults=30&startIndex=0`, {
+      setLoading(true)
+      fetch(`${BASE_URL}volumes?q=${searchOption.searchText}:${searchOption.category}&orderBy=${searchOption.sort}&maxResults=30&startIndex=${startBookIndex}`, {
         headers: {
           'Authorization': 'key=AIzaSyC9Ujvz5Ff7wxHAm8IPmU0xf634nieW8Qk',
         },
       })
         .then(res => res.json())
         .then((data) => {
-          setTotalBooks(data.totalItems);
           let array: IBook[] = []
           data.items.forEach((item: any) => {
             const newObj: IBook = {
@@ -45,16 +49,22 @@ const App = () => {
             };
             array.push(newObj);
           })
-          setBooksData(array);
-        });
+          if (!startBookIndex) {
+            setTotalBooks(data.totalItems);
+            setBooksData(array);
+          } else {
+            setBooksData(prevBooksData => [...prevBooksData, ...array]);
+          }
+          setLoading(false)
+        })
+        .catch(error => console.error('Ошибка:', error));
+      // setLoading(false)
     }
-
-
-  }, [searchOption]);
+  }, [searchOption, startBookIndex]);
 
   return (
     <div className='app'>
-      <Search onSubmit={setSearchOption} />
+      <Search onSubmit={onSubmitSearch} />
       {
         selectedBook ?
           <Book book={selectedBook} />
@@ -65,11 +75,12 @@ const App = () => {
               books={booksData}
               totalBooks={totalBooks}
             />
-            <LoadMoreButton />
+            {booksData.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
           </>
       }
+      {loading && <Loader />}
     </div>
   )
 }
 
-export default App
+export default App;

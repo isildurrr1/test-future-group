@@ -3,7 +3,6 @@ import './Book.sass';
 import noPhoto from './../../images/no_image.jpg'
 
 const Book: React.FC<BookProps> = ({ book }) => {
-  console.log(book)
   return (
     <div className='book'>
       <div className="book-cover">

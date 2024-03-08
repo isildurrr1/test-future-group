@@ -31,3 +31,8 @@ export interface CardProps {
 export interface BookProps {
   book: IBook
 }
+
+export interface LoadMoreButtonProps {
+  onLoadMoreClick: Function,
+  load: boolean
+}

@@ -1,7 +1,11 @@
-import  './LoadMoreButton.sass';
-const LoadMoreButton = () => {
+import { LoadMoreButtonProps } from '../../types/types';
+import './LoadMoreButton.sass';
+const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ onLoadMoreClick, load }) => {
+  const handleClick = () => onLoadMoreClick()
   return (
-    <button className="loadButton">Load more</button>
+    <>
+      {!load && <button className="loadButton" onClick={handleClick}>Load more</button>}
+    </>
   )
 }
 
