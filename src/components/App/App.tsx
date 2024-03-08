@@ -23,15 +23,29 @@ const App = () => {
     setTotalBooks(0);
     setSearchOption(formValue);
     setStartBookIndex(0);
-    navigate('/books', { replace: true })
+    navigate('/books')
   }
   const handleBookClick = (book: IBook) => {
     setSelectedBook(book);
-    navigate('/selected-book', { replace: true })
+    navigate('/selected-book')
   }
   const handleLoadMoreClick = () => setStartBookIndex(startBookIndex + 30);
 
   const BASE_URL = 'https://www.googleapis.com/books/v1/';
+
+  // useEffect(() => {
+  //   const handleBackButton = () => {
+  //     // Здесь вы можете выполнить необходимые действия
+  //     // когда пользователь нажимает кнопку "назад" в браузере.
+  //     console.log('Нажата кнопка "назад"');
+  //   };
+
+  //   window.addEventListener('popstate', handleBackButton);
+
+  //   return () => {
+  //     window.removeEventListener('popstate', handleBackButton);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (searchOption) {
