@@ -6,9 +6,11 @@ import Book from '../Book/Book';
 import Search from '../Search/Search';
 import './App.sass';
 import Loader from '../Loader/Loader';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 const App = () => {
 
+  const navigate = useNavigate();
   const [totalBooks, setTotalBooks] = useState<number>();
   const [selectedBook, setSelectedBook] = useState<IBook>();
   const [booksData, setBooksData] = useState<IBook[]>([]);
@@ -21,8 +23,12 @@ const App = () => {
     setTotalBooks(0);
     setSearchOption(formValue);
     setStartBookIndex(0);
+    navigate('/books', { replace: true })
   }
-  const handleBookClick = (book: IBook) => setSelectedBook(book);
+  const handleBookClick = (book: IBook) => {
+    setSelectedBook(book);
+    navigate('/selected-book', { replace: true })
+  }
   const handleLoadMoreClick = () => setStartBookIndex(startBookIndex + 30);
 
   const BASE_URL = 'https://www.googleapis.com/books/v1/';
@@ -58,17 +64,15 @@ const App = () => {
           setLoading(false)
         })
         .catch(error => console.error('Ошибка:', error));
-      // setLoading(false)
     }
   }, [searchOption, startBookIndex]);
 
   return (
     <div className='app'>
       <Search onSubmit={onSubmitSearch} />
-      {
-        selectedBook ?
-          <Book book={selectedBook} />
-          :
+      <Routes>
+        <Route path='/' element={<></>} />
+        <Route path='/books' element={
           <>
             < CardsContainer
               onBookClick={handleBookClick}
@@ -77,7 +81,9 @@ const App = () => {
             />
             {booksData.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
           </>
-      }
+        } />
+        <Route path='/selected-book' element={selectedBook ? <Book book={selectedBook} /> : <></>} />
+      </Routes>
       {loading && <Loader />}
     </div>
   )
