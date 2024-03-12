@@ -1,10 +1,10 @@
 export interface IBook {
-  'category': string,
-  'smallThumbnail': string,
-  'thumbnail': string,
-  'title': string,
-  'author': string,
-  'discription': string
+  category: string,
+  smallThumbnail: string,
+  thumbnail: string,
+  title: string,
+  author: string,
+  discription: string
 }
 
 export interface IOption {
@@ -26,9 +26,9 @@ export interface CardProps {
   onBookClick: Function
 }
 
-export interface BookProps {
-  book: IBook
-}
+// export interface BookProps {
+//   book: IBook
+// }
 
 export interface LoadMoreButtonProps {
   onLoadMoreClick: Function,
@@ -40,6 +40,8 @@ export interface BooksState {
   loading: boolean,
   startBookIndex: number,
   totalBooks: number,
+  searchOption: IOption,
+  selectedBook: IBook
 }
 
 export interface RootState {

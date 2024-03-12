@@ -6,6 +6,19 @@ const initialState: BooksState = {
   loading: false,
   startBookIndex: 0,
   totalBooks: 0,
+  searchOption: {
+    searchText: '',
+    category: '',
+    sort: ''
+  },
+  selectedBook: {
+    category: '',
+    smallThumbnail: '',
+    thumbnail: '',
+    title: '',
+    author: '',
+    discription: ''
+  }
 }
 
 const booksSlice = createSlice({
@@ -20,27 +33,34 @@ const booksSlice = createSlice({
     pushBooks(state, action) {
       state.books.push(...action.payload);
     },
-    reset(state) {
-      state.books = [];
-      state.totalBooks = 0;
-      state.startBookIndex = 0;
-    },
     setBookIndex(state) {
       state.startBookIndex = state.startBookIndex + 30;
     },
+    setLoading(state, action) {
+      state.loading = action.payload;
+    },
+    setSearchOption(state, action) {
+      state.books = [];
+      state.totalBooks = 0;
+      state.startBookIndex = 0;
+      state.searchOption = action.payload
+    },
+    setSelectedBook(state, action) {
+      state.selectedBook = action.payload
+    }
   }
 
 })
 
 export const storeBooks = (state: RootState) => state.books;
-// export const allBooks = (state: RootState) => state.books.books;
-// export const totalBooks = (state: RootState) => state.books.totalBooks;
 
 export const {
   getBooks,
   pushBooks,
-  reset,
-  setBookIndex
+  setBookIndex,
+  setLoading,
+  setSearchOption,
+  setSelectedBook
 } = booksSlice.actions;
 
 export default booksSlice.reducer;

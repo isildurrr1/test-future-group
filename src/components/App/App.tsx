@@ -1,46 +1,48 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { storeBooks } from '../../store/booksSlice';
 import { IBook, IOption } from '../../types/types';
 import CardsContainer from '../CardsContainer/CardsContainer';
 import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
 import Book from '../Book/Book';
 import Search from '../Search/Search';
-import './App.sass';
 import Loader from '../Loader/Loader';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import {  storeBooks } from '../../store/booksSlice';
+import './App.sass';
 
 const App = () => {
+  const BASE_URL = useMemo(() => 'https://www.googleapis.com/books/v1/', []);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useSelector(storeBooks);
 
-  const navigate = useNavigate();
-  const [selectedBook, setSelectedBook] = useState<IBook>();
-  const [searchOption, setSearchOption] = useState<IOption>();
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const onSubmitSearch = (formValue: IOption) => {
-
-    dispatch({ type: 'books/reset' })
-
-    setSearchOption(formValue);
-    navigate('/books')
-  }
+  const onSubmitSearch = useCallback((formValue: IOption) => {
+    dispatch({
+      type: 'books/setSearchOption',
+      payload: formValue
+    });
+    navigate('/books');
+  }, [dispatch, navigate]);
 
   const handleBookClick = (book: IBook) => {
-    setSelectedBook(book);
+    dispatch({
+      type: 'books/setSelectedBook',
+      payload: book
+    });
     navigate('/selected-book')
   }
 
-  const handleLoadMoreClick = () => dispatch({type: 'books/setBookIndex'})
+  const handleLoadMoreClick = () => dispatch({ type: 'books/setBookIndex' })
 
-  const BASE_URL = 'https://www.googleapis.com/books/v1/';
 
   useEffect(() => {
-    if (searchOption) {
-      setLoading(true);
+    if (store.searchOption.searchText) {
+      dispatch({
+        type: 'books/setLoading',
+        payload: true
+      });
       const timer = setTimeout(() => {
-        fetch(`${BASE_URL}volumes?q=${searchOption.searchText}:${searchOption.category}&orderBy=${searchOption.sort}&maxResults=30&startIndex=${store.startBookIndex}`, {
+        fetch(`${BASE_URL}volumes?q=${store.searchOption.searchText}:${store.searchOption.category}&orderBy=${store.searchOption.sort}&maxResults=30&startIndex=${store.startBookIndex}`, {
           headers: {
             'Authorization': `key=${process.env.REACT_APP_API_KEY}`,
           },
@@ -61,21 +63,36 @@ const App = () => {
             });
 
             if (store.startBookIndex === 0) {
-              dispatch({ type: 'books/getBooks', payload: { data: array, total: data.totalItems } });
+              dispatch({
+                type: 'books/getBooks',
+                payload: {
+                  data: array,
+                  total: data.totalItems
+                }
+              });
             } else {
-              dispatch({ type: 'books/pushBooks', payload: array });
+              dispatch({
+                type: 'books/pushBooks',
+                payload: array
+              });
             }
 
-            setLoading(false);
+            dispatch({
+              type: 'books/setLoading',
+              payload: false
+            });
           })
           .catch(error => {
             console.error('Ошибка:', error);
-            setLoading(false);
+            dispatch({
+              type: 'books/setLoading',
+              payload: false
+            });
           });
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [searchOption, store.startBookIndex, dispatch]);
+  }, [BASE_URL, store.searchOption, store.startBookIndex, dispatch]);
 
   return (
     <div className='app'>
@@ -87,12 +104,12 @@ const App = () => {
             <CardsContainer
               onBookClick={handleBookClick}
             />
-            {store.books.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
+            {store.books.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={store.loading} />}
           </>
         } />
-        <Route path='/selected-book' element={selectedBook ? <Book book={selectedBook} /> : <></>} />
+        <Route path='/selected-book' element={store.selectedBook.title ? <Book /> : <></>} />
       </Routes>
-      {loading && <Loader />}
+      {store.loading && <Loader />}
     </div>
   )
 }
