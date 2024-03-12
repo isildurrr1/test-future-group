@@ -13,7 +13,7 @@ const booksSlice = createSlice({
   initialState,
   reducers: {
     getBooks(state, action) {
-      const {data, total} = action.payload;
+      const { data, total } = action.payload;
       state.books = data;
       state.totalBooks = total;
     },
@@ -23,14 +23,24 @@ const booksSlice = createSlice({
     reset(state) {
       state.books = [];
       state.totalBooks = 0;
-    }
+      state.startBookIndex = 0;
+    },
+    setBookIndex(state) {
+      state.startBookIndex = state.startBookIndex + 30;
+    },
   }
 
 })
 
-export const allBooks = (state: RootState) => state.books.books;
-export const totalBooks = (state: RootState) => state.books.totalBooks;
+export const storeBooks = (state: RootState) => state.books;
+// export const allBooks = (state: RootState) => state.books.books;
+// export const totalBooks = (state: RootState) => state.books.totalBooks;
 
-export const { getBooks, pushBooks, reset } = booksSlice.actions; 
+export const {
+  getBooks,
+  pushBooks,
+  reset,
+  setBookIndex
+} = booksSlice.actions;
 
 export default booksSlice.reducer;

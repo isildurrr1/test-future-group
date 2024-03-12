@@ -8,17 +8,15 @@ import './App.sass';
 import Loader from '../Loader/Loader';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { allBooks } from '../../store/booksSlice';
+import {  storeBooks } from '../../store/booksSlice';
 
 const App = () => {
   const dispatch = useDispatch();
-  const booksData = useSelector(allBooks);
+  const store = useSelector(storeBooks);
 
   const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState<IBook>();
   const [searchOption, setSearchOption] = useState<IOption>();
-
-  const [startBookIndex, setStartBookIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmitSearch = (formValue: IOption) => {
@@ -26,7 +24,6 @@ const App = () => {
     dispatch({ type: 'books/reset' })
 
     setSearchOption(formValue);
-    setStartBookIndex(0);
     navigate('/books')
   }
 
@@ -35,7 +32,7 @@ const App = () => {
     navigate('/selected-book')
   }
 
-  const handleLoadMoreClick = () => setStartBookIndex(startBookIndex + 30);
+  const handleLoadMoreClick = () => dispatch({type: 'books/setBookIndex'})
 
   const BASE_URL = 'https://www.googleapis.com/books/v1/';
 
@@ -43,7 +40,7 @@ const App = () => {
     if (searchOption) {
       setLoading(true);
       const timer = setTimeout(() => {
-        fetch(`${BASE_URL}volumes?q=${searchOption.searchText}:${searchOption.category}&orderBy=${searchOption.sort}&maxResults=30&startIndex=${startBookIndex}`, {
+        fetch(`${BASE_URL}volumes?q=${searchOption.searchText}:${searchOption.category}&orderBy=${searchOption.sort}&maxResults=30&startIndex=${store.startBookIndex}`, {
           headers: {
             'Authorization': `key=${process.env.REACT_APP_API_KEY}`,
           },
@@ -63,7 +60,7 @@ const App = () => {
               array.push(newObj);
             });
 
-            if (startBookIndex === 0) {
+            if (store.startBookIndex === 0) {
               dispatch({ type: 'books/getBooks', payload: { data: array, total: data.totalItems } });
             } else {
               dispatch({ type: 'books/pushBooks', payload: array });
@@ -78,7 +75,7 @@ const App = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [searchOption, startBookIndex, dispatch]);
+  }, [searchOption, store.startBookIndex, dispatch]);
 
   return (
     <div className='app'>
@@ -90,7 +87,7 @@ const App = () => {
             <CardsContainer
               onBookClick={handleBookClick}
             />
-            {booksData.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
+            {store.books.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
           </>
         } />
         <Route path='/selected-book' element={selectedBook ? <Book book={selectedBook} /> : <></>} />
