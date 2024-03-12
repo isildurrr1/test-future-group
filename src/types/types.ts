@@ -18,9 +18,7 @@ export interface SearchProps {
 }
 
 export interface CardsContainerProps {
-  onBookClick: Function,
-  books: IBook[],
-  totalBooks: number | undefined
+  onBookClick: Function
 }
 
 export interface CardProps {
@@ -35,4 +33,15 @@ export interface BookProps {
 export interface LoadMoreButtonProps {
   onLoadMoreClick: Function,
   load: boolean
+}
+
+export interface BooksState {
+  books: IBook[],
+  loading: boolean,
+  startBookIndex: number,
+  totalBooks: number,
+}
+
+export interface RootState {
+  books: BooksState;
 }

@@ -7,19 +7,24 @@ import Search from '../Search/Search';
 import './App.sass';
 import Loader from '../Loader/Loader';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { allBooks } from '../../store/booksSlice';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const booksData = useSelector(allBooks);
+
   const navigate = useNavigate();
-  const [totalBooks, setTotalBooks] = useState<number>();
   const [selectedBook, setSelectedBook] = useState<IBook>();
-  const [booksData, setBooksData] = useState<IBook[]>([]);
   const [searchOption, setSearchOption] = useState<IOption>();
+
   const [startBookIndex, setStartBookIndex] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmitSearch = (formValue: IOption) => {
-    setBooksData([]);
-    setTotalBooks(0);
+
+    dispatch({ type: 'books/reset' })
+
     setSearchOption(formValue);
     setStartBookIndex(0);
     navigate('/books')
@@ -59,10 +64,9 @@ const App = () => {
             });
 
             if (startBookIndex === 0) {
-              setTotalBooks(data.totalItems);
-              setBooksData(array);
+              dispatch({ type: 'books/getBooks', payload: { data: array, total: data.totalItems } });
             } else {
-              setBooksData(prevBooksData => [...prevBooksData, ...array]);
+              dispatch({ type: 'books/pushBooks', payload: array });
             }
 
             setLoading(false);
@@ -74,7 +78,7 @@ const App = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [searchOption, startBookIndex]);
+  }, [searchOption, startBookIndex, dispatch]);
 
   return (
     <div className='app'>
@@ -85,8 +89,6 @@ const App = () => {
           <>
             <CardsContainer
               onBookClick={handleBookClick}
-              books={booksData}
-              totalBooks={totalBooks}
             />
             {booksData.length > 0 && <LoadMoreButton onLoadMoreClick={handleLoadMoreClick} load={loading} />}
           </>
